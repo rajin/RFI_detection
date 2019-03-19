@@ -1,5 +1,4 @@
 
-
 ''' The main purpose of this code is to apply various processing procedures
 to the data Radio data that will be fed to the RFI detection algorithm.
 This includes simulated data or real observations 
@@ -102,5 +101,7 @@ def pipeline1(filenames):
 	save_h5file('dirty_seq.h5',dirty_seq,dataset='dirty_seq')
 	save_h5file('rfi_seq.h5',rfi_seq,dataset='rfi_seq')
 	return dirty_seq,rfi_seq
+
+
 
 
