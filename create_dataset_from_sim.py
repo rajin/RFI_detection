@@ -141,7 +141,7 @@ for i in range(data_dirty_vis_stokes_mag_shuffle.shape[0]):
 	data_dirty_vis_stokes_mag_shuffle[i,:,:] = data_dirty_vis_stokes_mag[shuffle_indices[i],:,:]
 	data_rfi_vis_stokes_mag_shuffle[i,:,:] = data_rfi_vis_stokes_mag[shuffle_indices[i],:,:]
 
-########## saving dataset for first case 
-########## saving dataset for first case 
+
+########## saving dataset for 2nd case 
 save_h5file('shuf_seconddat_dirty_vis.h5',first_data_dirty_vis_mag_shuffle,dataset='shuf_seconddat_dirty_vis.h5')
 save_h5file('shuf_seconddat_rfi_vis.h5',first_data_rfi_vis_mag_shuffle,dataset='shuf_seconddat_rfi_vis.h5')
