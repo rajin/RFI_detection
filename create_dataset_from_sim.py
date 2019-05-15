@@ -145,3 +145,70 @@ for i in range(data_dirty_vis_stokes_mag_shuffle.shape[0]):
 ########## saving dataset for 2nd case 
 save_h5file('shuf_seconddat_dirty_vis.h5',first_data_dirty_vis_mag_shuffle,dataset='shuf_seconddat_dirty_vis.h5')
 save_h5file('shuf_seconddat_rfi_vis.h5',first_data_rfi_vis_mag_shuffle,dataset='shuf_seconddat_rfi_vis.h5')
+
+
+
+
+#### loading the data
+astro_sources = read_h5file('astro_sources.h5',dataset='astro_sources')
+rfi = read_h5file('rfi.h5',dataset='rfi')
+
+#creating noise and creating the dirty visibility
+noise_array = create_noise(astro_sources,0,0.168)
+
+################################## Data augmentation ##########################
+np.random.seed(10)
+rfi_intensity = np.random.uniform(0,3,10)
+for i in range(10):
+	print(i)
+	if i == 0:
+		rfi_augment = rfi_intensity[i]*rfi
+		dirty_vis = astro_sources + noise_array + rfi_augment
+	else:
+		rfi_augment_1 = rfi_intensity[i]*rfi
+		out = astro_sources + create_noise(astro_sources,0,0.168,seed=i) + rfi_augment_1
+		dirty_vis = np.append(dirty_vis,out,axis=0)
+		rfi_augment = np.append(rfi_augment,rfi_augment_1,axis=0)
+
+# saving file as backup
+save_h5file('aug_sample_dirty_vis.h5',dirty_vis,dataset='aug_sample_dirty_vis')
+save_h5file('aug_sample_rfi_vis.h5',rfi_augment,dataset='aug_sample_rfi_vis')
+del astro_sources
+del noise_array
+del rfi_augment_1
+del out
+
+###################################### creating 3rd dataset - baseline data cube ##########################
+#looping over 4 polarization channels
+third_data_dirty_vis = np.zeros(((dirty_vis.shape[0]*4)/10,,10,100,4096),dtype=np.complex_)
+third_data_rfi_vis = np.zeros(((dirty_vis.shape[0]*4)/10,10,100,4096),dtype=np.complex_)
+k = 0
+for i in range(dirty_vis.shape[0]):
+	for j in range(4):
+		third_data_dirty_vis[k,:,:,:] = dirty_vis[(i*10):((i+1)*10),:,:,j]
+		third_data_rfi_vis[k,:,:,:] = rfi_augment[(i*10):((i+1)*10),:,:,j]
+		k += 1
+
+##### converting complex values to absolute_mag
+third_data_dirty_vis_mag = process_complex_arr(third_data_dirty_vis,output_format='absolute magnitude')
+third_data_rfi_vis_mag = process_complex_arr(third_data_rfi_vis,output_format='absolute magnitude')
+
+#### shuffling dataset to be able to train test etc 
+#creating shuffle indices
+sim_im_num = third_data_dirty_vis_mag.shape[0]
+indices = np.arange(0,sim_im_num)
+shuffle_indices = shuffle(indices, random_state=0)
+
+#applying shuffling
+third_data_dirty_vis_mag_shuffle = np.zeros(third_data_dirty_vis_mag.shape,float)
+third_data_rfi_vis_mag_shuffle = np.zeros(third_data_rfi_vis_mag.shape,float)
+
+for i in range(third_data_dirty_vis_mag.shape[0]):
+	third_data_dirty_vis_mag_shuffle[i,:,:,:] = third_data_dirty_vis_mag[shuffle_indices[i],:,:,:]
+	third_data_rfi_vis_mag_shuffle[i,:,:,:] = third_data_rfi_vis_mag[shuffle_indices[i],:,:,:]
+
+########## saving dataset for first case 
+save_h5file('shuf_thirddat_dirty_vis.h5',third_data_dirty_vis_mag_shuffle,dataset='shuf_thirddat_dirty_vis')
+save_h5file('shuf_thirddat_rfi_vis.h5',third_data_rfi_vis_mag_shuffle,dataset='shuf_thirddat_rfi_vis')
+
+
