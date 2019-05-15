@@ -188,7 +188,7 @@ size_arr = int((dirty_vis.shape[0]*4)/10)
 third_data_dirty_vis = np.zeros((size_arr,10,100,4096),dtype=np.complex_)
 third_data_rfi_vis = np.zeros((size_arr,10,100,4096),dtype=np.complex_)
 k = 0
-for i in range(dirty_vis.shape[0]):
+for i in range(dirty_vis.shape[0]-1):
 	for j in range(4):
 		third_data_dirty_vis[k,:,:,:] = dirty_vis[(i*10):((i+1)*10),:,:,j]
 		third_data_rfi_vis[k,:,:,:] = rfi_augment[(i*10):((i+1)*10),:,:,j]
