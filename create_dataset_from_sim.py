@@ -152,6 +152,7 @@ save_h5file('shuf_seconddat_rfi_vis.h5',first_data_rfi_vis_mag_shuffle,dataset='
 ########################################################################################################################################################
 
 
+
 #### loading the data
 astro_sources = read_h5file('astro_sources.h5',dataset='astro_sources')
 rfi = read_h5file('rfi.h5',dataset='rfi')
@@ -183,12 +184,11 @@ del out
 
 ###################################### creating 3rd dataset - baseline data cube ##########################
 #looping over 4 polarization channels
-
 size_arr = int((dirty_vis.shape[0]*4)/10)
 third_data_dirty_vis = np.zeros((size_arr,10,100,4096),dtype=np.complex_)
 third_data_rfi_vis = np.zeros((size_arr,10,100,4096),dtype=np.complex_)
 k = 0
-for i in range(dirty_vis.shape[0]-1):
+for i in range(int(dirty_vis.shape[0]/10)-1):
 	for j in range(4):
 		third_data_dirty_vis[k,:,:,:] = dirty_vis[(i*10):((i+1)*10),:,:,j]
 		third_data_rfi_vis[k,:,:,:] = rfi_augment[(i*10):((i+1)*10),:,:,j]
@@ -199,6 +199,8 @@ third_data_dirty_vis_mag = process_complex_arr(third_data_dirty_vis,output_forma
 third_data_rfi_vis_mag = process_complex_arr(third_data_rfi_vis,output_format='absolute magnitude')
 del third_data_dirty_vis
 del third_data_rfi_vis
+del dirty_vis
+del rfi_augment
 
 #### shuffling dataset to be able to train test etc 
 #creating shuffle indices
