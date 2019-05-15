@@ -183,8 +183,10 @@ del out
 
 ###################################### creating 3rd dataset - baseline data cube ##########################
 #looping over 4 polarization channels
-third_data_dirty_vis = np.zeros(((dirty_vis.shape[0]*4)/10,,10,100,4096),dtype=np.complex_)
-third_data_rfi_vis = np.zeros(((dirty_vis.shape[0]*4)/10,10,100,4096),dtype=np.complex_)
+
+size_arr = int((dirty_vis.shape[0]*4)/10)
+third_data_dirty_vis = np.zeros((size_arr,10,100,4096),dtype=np.complex_)
+third_data_rfi_vis = np.zeros((size_arr,10,100,4096),dtype=np.complex_)
 k = 0
 for i in range(dirty_vis.shape[0]):
 	for j in range(4):
@@ -195,6 +197,8 @@ for i in range(dirty_vis.shape[0]):
 ##### converting complex values to absolute_mag
 third_data_dirty_vis_mag = process_complex_arr(third_data_dirty_vis,output_format='absolute magnitude')
 third_data_rfi_vis_mag = process_complex_arr(third_data_rfi_vis,output_format='absolute magnitude')
+del third_data_dirty_vis
+del third_data_rfi_vis
 
 #### shuffling dataset to be able to train test etc 
 #creating shuffle indices
@@ -209,6 +213,9 @@ third_data_rfi_vis_mag_shuffle = np.zeros(third_data_rfi_vis_mag.shape,float)
 for i in range(third_data_dirty_vis_mag.shape[0]):
 	third_data_dirty_vis_mag_shuffle[i,:,:,:] = third_data_dirty_vis_mag[shuffle_indices[i],:,:,:]
 	third_data_rfi_vis_mag_shuffle[i,:,:,:] = third_data_rfi_vis_mag[shuffle_indices[i],:,:,:]
+
+del third_data_dirty_vis_mag
+del third_data_rfi_vis_mag
 
 ########## saving dataset for first case 
 save_h5file('shuf_thirddat_dirty_vis.h5',third_data_dirty_vis_mag_shuffle,dataset='shuf_thirddat_dirty_vis')
