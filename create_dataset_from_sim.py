@@ -117,7 +117,7 @@ def create_stokes_from_sim(arr_in):
 	new_arr[:,:,:,1] = Q
 	new_arr[:,:,:,2] = U
 	new_arr[:,:,:,3] = V
-	new_arr[:,:,:,3] = P
+	new_arr[:,:,:,4] = P
 
 	return new_arr
 
